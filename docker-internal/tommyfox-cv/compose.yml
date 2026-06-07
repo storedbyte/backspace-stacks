@@ -1,0 +1,9 @@
+services:
+  tommyfox-cv:
+    image: nginx:alpine
+    container_name: tommyfox-cv
+    restart: unless-stopped
+    ports:
+      - "8088:80"
+    volumes:
+      - /mnt/data/tommyfox-cv:/usr/share/nginx/html:ro

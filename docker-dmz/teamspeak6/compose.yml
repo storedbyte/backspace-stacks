@@ -1,0 +1,12 @@
+services:
+  teamspeak6:
+    image: teamspeaksystems/teamspeak6-server:latest
+    container_name: ts6-server
+    restart: unless-stopped
+    environment:
+      TSSERVER_LICENSE_ACCEPTED: accept
+    ports:
+      - "9987:9987/udp"
+      - "30033:30033/tcp"
+    volumes:
+      - /opt/docker/teamspeak:/var/tsserver/

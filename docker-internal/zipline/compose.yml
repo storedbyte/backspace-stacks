@@ -1,0 +1,26 @@
+services:
+  zipline:
+    image: ghcr.io/diced/zipline:latest
+    container_name: zipline
+    restart: unless-stopped
+    ports:
+      - "3456:3000"
+    environment:
+      CORE_SECRET: ${CORE_SECRET}
+      DATABASE_URL: postgresql://zipline:${POSTGRES_PASSWORD}@postgres:5432/zipline
+      CORE_RETURN_HTTPS_URLS: "true"
+    volumes:
+      - /mnt/data/zipline/uploads:/zipline/uploads
+      - /mnt/data/zipline/public:/zipline/public
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:15-alpine
+    container_name: zipline_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: zipline
+      POSTGRES_USER: zipline
+    volumes:
+      - /mnt/data/zipline/postgres-data:/var/lib/postgresql/data

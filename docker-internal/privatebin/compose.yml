@@ -1,0 +1,10 @@
+services:
+  privatebin:
+    image: privatebin/nginx-fpm-alpine:latest
+    container_name: privatebin
+    restart: unless-stopped
+    ports:
+      - "18085:8080"
+    volumes:
+      - /mnt/data/privatebin/data:/srv/data
+      - /mnt/data/privatebin/cfg:/srv/cfg

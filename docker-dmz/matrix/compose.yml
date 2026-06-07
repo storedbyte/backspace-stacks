@@ -1,0 +1,50 @@
+services:
+  synapse:
+    image: matrixdotorg/synapse:latest
+    container_name: synapse
+    restart: unless-stopped
+    depends_on:
+      - synapse-db
+    volumes:
+      - /opt/docker/matrix/synapse:/data
+    environment:
+      SYNAPSE_CONFIG_PATH: /data/homeserver.yaml
+    ports:
+      - "8008:8008"
+    networks:
+      - synapse-net
+  synapse-db:
+    image: postgres:16
+    container_name: synapse-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: synapse
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: synapse
+      POSTGRES_INITDB_ARGS: --encoding=UTF-8 --lc-collate=C --lc-ctype=C
+    volumes:
+      - /opt/docker/matrix/db:/var/lib/postgresql/data
+    networks:
+      - synapse-net
+  element:
+    image: vectorim/element-web:latest
+    container_name: element
+    restart: unless-stopped
+    volumes:
+      - /opt/docker/matrix/element/config.json:/app/config.json
+    ports:
+      - "8009:80"
+    networks:
+      - synapse-net
+  synapse-admin:
+    image: awesometechnologies/synapse-admin:latest
+    container_name: synapse-admin
+    restart: unless-stopped
+    ports:
+      - "8010:80"
+    networks:
+      - synapse-net
+volumes:
+  synapse-db-data:
+networks:
+  synapse-net:

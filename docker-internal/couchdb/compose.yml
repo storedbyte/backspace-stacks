@@ -1,0 +1,12 @@
+services:
+  couchdb:
+    image: couchdb:latest
+    container_name: couchdb
+    restart: unless-stopped
+    environment:
+      COUCHDB_USER: ${COUCHDB_USER}
+      COUCHDB_PASSWORD: ${COUCHDB_PASSWORD}
+    volumes:
+      - /mnt/data/couchdb:/opt/couchdb/data
+    ports:
+      - "5984:5984"

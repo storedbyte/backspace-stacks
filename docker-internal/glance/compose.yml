@@ -1,0 +1,10 @@
+services:
+  glance:
+    image: glanceapp/glance:latest
+    container_name: glance
+    restart: unless-stopped
+    ports:
+      - "8085:8080"
+    volumes:
+      - /mnt/data/glance/config:/app/config
+      - /mnt/data/glance/assets:/app/assets
