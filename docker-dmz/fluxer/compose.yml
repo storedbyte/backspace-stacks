@@ -107,6 +107,15 @@ services:
       - /mnt/data/fluxer/caddy-config:/config
     depends_on: [api, gateway, media-proxy, static-proxy, admin]
 
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    restart: unless-stopped
+    command: tunnel run --token ${CLOUDFLARED_TOKEN:?set CLOUDFLARED_TOKEN in .env}
+    networks: [fluxer]
+    depends_on:
+      - caddy
+
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
