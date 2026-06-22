@@ -1,0 +1,48 @@
+services:
+  docmost:
+    image: docmost/docmost:latest
+    container_name: docmost
+    restart: unless-stopped
+    depends_on:
+      docmost-db:
+        condition: service_healthy
+      docmost-redis:
+        condition: service_started
+    ports:
+      - "3002:3000"
+    volumes:
+      - /mnt/data/docmost/storage:/app/data/storage
+    environment:
+      APP_URL: "https://docs.bkspc.cc"
+      APP_SECRET: ${APP_SECRET}
+      DATABASE_URL: "postgresql://docmost:${POSTGRES_PASSWORD}@docmost-db:5432/docmost?schema=public"
+      REDIS_URL: "redis://docmost-redis:6379"
+      MAIL_DRIVER: "smtp"
+      SMTP_HOST: "smtp.startmail.com"
+      SMTP_PORT: "465"
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      SMTP_SECURE: "true"
+      MAIL_FROM_ADDRESS: "postmaster@bkspc.cc"
+      MAIL_FROM_NAME: "Backspace"
+
+  docmost-db:
+    image: postgres:16-alpine
+    container_name: docmost-db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U docmost -d docmost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - /mnt/data/docmost/db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: docmost
+      POSTGRES_USER: docmost
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+  docmost-redis:
+    image: redis:7.2-alpine
+    container_name: docmost-redis
+    restart: unless-stopped
