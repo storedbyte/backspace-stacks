@@ -1,6 +1,6 @@
 services:
   couchdb:
-    image: couchdb:latest
+    image: couchdb:3
     container_name: couchdb
     restart: unless-stopped
     environment:
@@ -8,5 +8,6 @@ services:
       COUCHDB_PASSWORD: ${COUCHDB_PASSWORD}
     volumes:
       - /mnt/data/couchdb:/opt/couchdb/data
+      - ./10-livesync.ini:/opt/couchdb/etc/local.d/10-livesync.ini
     ports:
       - "5984:5984"
